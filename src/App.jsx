@@ -15,7 +15,7 @@ const GraphicsContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  padding: 30px;
+  /* padding: 30px; */
 `
 
 const api_url_daily_cases = "https://covid19.th-stat.com/api/open/timeline";

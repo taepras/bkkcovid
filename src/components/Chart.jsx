@@ -28,6 +28,8 @@ const SvgContainer = styled.div`
   right: 0;
   bottom: 0;
 
+  font-family: 'Mitr', sans-serif;
+
   .axis line, .axis path {
     stroke: white;
   }
@@ -297,23 +299,23 @@ const Chart = ({
               backgroundColor: '#F3E1E3'
             }}
           >
-            <text x={pad} y={pad} fontSize={24} dominantBaseline="hanging" fontFamily="Mitr" fontWeight="600">สถานการณ์ COVID-19 ใน</text>
-            <text x={pad} y={pad + 20} fontSize={39} dominantBaseline="hanging" fontFamily="Mitr" fontWeight="600">กรุงเทพมหานคร</text>
+            <text x={pad} y={pad} fontSize={24} dominantBaseline="hanging" fontWeight="600">สถานการณ์ COVID-19 ใน</text>
+            <text x={pad} y={pad + 20} fontSize={39} dominantBaseline="hanging" fontWeight="600">กรุงเทพมหานคร</text>
 
             <rect x={width - pad - 160} y={pad} width={160} height={64} rx={16} fill={lastestDay.dayColor} />
-            <text x={width - pad - 80} y={pad + 10} dominantBaseline="hanging" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">ประจำวัน{lastestDay.weekdayStr}ที่</text>
-            <text x={width - pad - 80} y={pad + 28} dominantBaseline="hanging" textAnchor="middle" fontFamily="Mitr" fontWeight="600" fontSize={24} class="text-white">{lastestDay.dateStr}</text>
+            <text x={width - pad - 80} y={pad + 10} dominantBaseline="hanging" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ประจำวัน{lastestDay.weekdayStr}ที่</text>
+            <text x={width - pad - 80} y={pad + 28} dominantBaseline="hanging" textAnchor="middle" fontWeight="600" fontSize={24} class="text-white">{lastestDay.dateStr}</text>
 
             <g transform={`translate(${pad},${topOffset})`}>
               <rect width={boxWidth} height={boxHeight} rx={16} fill="#C33646" class="shadow" />
               <rect width={textBoxWidth} height={boxHeight} rx={16} fill="#0002" />
               <g transform={`translate(${textBoxWidth / 2},${boxHeight / 2})`}>
-                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">ผู้ติดเชื้อยืนยันวันนี้</text>
-                <text y={0} dominantBaseline="middle" textAnchor="middle" fontFamily="Mitr" fontWeight="600" fontSize={48} class="text-white">
+                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ผู้ติดเชื้อยืนยันวันนี้</text>
+                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
                   +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
                 </text>
               </g>
-              <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">
+              <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
                 สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()}
               </text>
 
@@ -323,7 +325,7 @@ const Chart = ({
                 y={boxHeight - boxPadding - padding.bottom + 6}
                 dominantBaseline="hanging"
                 textAnchor="start"
-                fontFamily="Mitr"
+
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
@@ -334,7 +336,7 @@ const Chart = ({
                 y={boxHeight - boxPadding - padding.bottom + 6}
                 dominantBaseline="hanging"
                 textAnchor="end"
-                fontFamily="Mitr"
+
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
@@ -374,15 +376,15 @@ const Chart = ({
               <rect width={boxWidth} height={deathBoxHeight} rx={16} fill="#333031" class="shadow" />
               <rect width={textBoxWidth} height={deathBoxHeight} rx={16} fill="#fff1" />
               <g transform={`translate(${textBoxWidth / 2},${deathBoxHeight / 2 - 8})`}>
-                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">ผู้เสียชีวิตยืนยันวันนี้</text>
-                <text y={0} dominantBaseline="middle" textAnchor="middle" fontFamily="Mitr" fontWeight="600" fontSize={48} class="text-white">
+                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ผู้เสียชีวิตยืนยันวันนี้</text>
+                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
                   +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
                 </text>
-                <text y={36} dominantBaseline="middle" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">
+                <text y={36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
                   ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()}
                 </text>
               </g>
-              <text x={textBoxWidth / 2} y={deathBoxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">
+              <text x={textBoxWidth / 2} y={deathBoxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
                 สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()}
               </text>
               {/* AXIS DATE TICKS */}
@@ -391,7 +393,7 @@ const Chart = ({
                 y={deathBoxHeight - boxPadding - padding.bottom + 6}
                 dominantBaseline="hanging"
                 textAnchor="start"
-                fontFamily="Mitr"
+
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
@@ -402,7 +404,7 @@ const Chart = ({
                 y={deathBoxHeight - boxPadding - padding.bottom + 6}
                 dominantBaseline="hanging"
                 textAnchor="end"
-                fontFamily="Mitr"
+
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
@@ -426,16 +428,24 @@ const Chart = ({
               />
             </g>
 
-            <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontFamily="Mitr" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
-            <text x={pad} y={height - pad} dominantBaseline="bottom" fontFamily="Mitr" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text>
+            <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
+            <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text>
 
-            {/* <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontFamily="Mitr" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
-          <text x={pad} y={height - pad} dominantBaseline="bottom" fontFamily="Mitr" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
+            {/* <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
+          <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
           </svg>
         </div>
         <br />
-        <br/>
-        <button onClick={downloadPng}>Download PNG</button>
+        <br />
+        <div style={{ textAlign: 'center' }}>
+          <button onClick={downloadPng} style={{
+            backgroundColor: '#C33646',
+            padding: '6px 12px',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '8px',
+          }}>Download PNG</button>
+        </div>
       </SvgContainer>
     </ChartContainer>
   </>;
