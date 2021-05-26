@@ -30,6 +30,10 @@ const SvgContainer = styled.div`
 
   font-family: 'Mitr', sans-serif;
 
+  text {
+    font-family: 'Mitr', sans-serif;
+  }
+
   .axis line, .axis path {
     stroke: white;
   }
