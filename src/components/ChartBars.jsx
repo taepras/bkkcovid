@@ -41,7 +41,7 @@ const ChartBars = ({
       .enter()
       .append("rect")
       .classed("b", true)
-      .attr("x", d => scaleX(new Date(d.date)))
+      .attr("x", d => scaleX(new Date(d.date)) - barWidth)
       .attr("y", d => scaleY(d.value))
       .attr("width", barWidth)
       .attr("height", d => scaleY(scaleY.domain()[1] - d.value))

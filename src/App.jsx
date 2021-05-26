@@ -29,15 +29,15 @@ function App() {
   const [nationalData, setNationalData] = useState();
   const [bangkokData, setBangkokData] = useState();
 
-  const [startDate, setStartDate] = useState(DateTime.now().minus({ days: 60 }).startOf('day'))
+  const [startDate, setStartDate] = useState(DateTime.now().minus({ months: 2 }).startOf('day'))
   const [endDate, setEndDate] = useState(DateTime.now().startOf('day'))
 
   const datesRange = useMemo(() => {
     const dates = [];
     let d = startDate;
     while (d <= endDate) {
-      d = d.plus({ days: 1 });
       dates.push(d.toISODate())
+      d = d.plus({ days: 1 });
     }
     return dates;
   }, [startDate, endDate]);
@@ -55,6 +55,9 @@ function App() {
         dynamicTyping: true
       });
       console.log('gsheets', data);
+      const dt = DateTime.fromISO(data.data[data.data.length - 1].date);
+      setEndDate(dt);
+      setStartDate(dt.minus({ months: 2 }).startOf('day'));
       setBangkokData(data);
       // setData(res.data);
     });
@@ -72,6 +75,8 @@ function App() {
       )
     });
 
+    // console.log('bkk', nationalData);
+    // console.log('bkk', bangkokData);
     const filteredGSheets = bangkokData.data.filter(x => {
       const dt = DateTime.fromISO(x.date);
       return (
@@ -79,6 +84,7 @@ function App() {
         dt <= endDate.endOf('day')
       )
     });
+    // console.log('bkk', filteredGSheets);
 
     const combined = datesRange.map(date => {
       return {
@@ -93,7 +99,7 @@ function App() {
       }
     })
 
-    console.log('gs', filteredGSheets);
+    console.log('gs', filteredGSheets, combined);
 
     return combined;
   }, [nationalData, bangkokData, startDate, endDate, datesRange]);
@@ -101,7 +107,7 @@ function App() {
   return (
     <div className="App">
       <GraphicsContainer>
-        <h1>สถานการณ์โควิดใน กทม.</h1>
+        {/* <h1>สถานการณ์โควิดใน กทม.</h1> */}
         <Chart
           datesRange={datesRange}
           processedData={processedData} />
