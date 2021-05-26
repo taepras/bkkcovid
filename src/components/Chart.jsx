@@ -256,7 +256,7 @@ const Chart = ({
     })
       .then(function (dataUrl) {
         var link = document.createElement('a');
-        link.download = 'my-image-name.png';
+        link.download = `bkkcovid-${lastestDay.iso}.png`;
         link.href = dataUrl;
         link.click();
       })
@@ -301,7 +301,7 @@ const Chart = ({
             <text x={pad} y={pad + 20} fontSize={39} dominantBaseline="hanging" fontFamily="Mitr" fontWeight="600">กรุงเทพมหานคร</text>
 
             <rect x={width - pad - 160} y={pad} width={160} height={64} rx={16} fill={lastestDay.dayColor} />
-            <text x={width - pad - 80} y={pad + 10} dominantBaseline="hanging" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">ประจำวัน {lastestDay.weekdayStr} ที่</text>
+            <text x={width - pad - 80} y={pad + 10} dominantBaseline="hanging" textAnchor="middle" fontFamily="Mitr" fontWeight="400" fontSize={16} class="text-white">ประจำวัน{lastestDay.weekdayStr}ที่</text>
             <text x={width - pad - 80} y={pad + 28} dominantBaseline="hanging" textAnchor="middle" fontFamily="Mitr" fontWeight="600" fontSize={24} class="text-white">{lastestDay.dateStr}</text>
 
             <g transform={`translate(${pad},${topOffset})`}>
@@ -433,10 +433,11 @@ const Chart = ({
           <text x={pad} y={height - pad} dominantBaseline="bottom" fontFamily="Mitr" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
           </svg>
         </div>
+        <br />
+        <br/>
+        <button onClick={downloadPng}>Download PNG</button>
       </SvgContainer>
     </ChartContainer>
-    <canvas id="canvas" ref={canvasRef} width={width} height={height}></canvas>
-    <button onClick={downloadPng}>Download PNG</button>
   </>;
 }
 
