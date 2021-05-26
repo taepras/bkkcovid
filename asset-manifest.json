@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/bkkcovid/static/css/main.10e86879.chunk.css",
+    "main.css": "/bkkcovid/static/css/main.5bbd9dec.chunk.css",
     "main.js": "/bkkcovid/static/js/main.68696a36.chunk.js",
     "main.js.map": "/bkkcovid/static/js/main.68696a36.chunk.js.map",
     "runtime-main.js": "/bkkcovid/static/js/runtime-main.3a7cb7ff.js",
@@ -10,14 +10,14 @@
     "static/js/3.1958b643.chunk.js": "/bkkcovid/static/js/3.1958b643.chunk.js",
     "static/js/3.1958b643.chunk.js.map": "/bkkcovid/static/js/3.1958b643.chunk.js.map",
     "index.html": "/bkkcovid/index.html",
-    "static/css/main.10e86879.chunk.css.map": "/bkkcovid/static/css/main.10e86879.chunk.css.map",
+    "static/css/main.5bbd9dec.chunk.css.map": "/bkkcovid/static/css/main.5bbd9dec.chunk.css.map",
     "static/js/2.e0e41dc6.chunk.js.LICENSE.txt": "/bkkcovid/static/js/2.e0e41dc6.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/bkkcovid/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.3a7cb7ff.js",
     "static/js/2.e0e41dc6.chunk.js",
-    "static/css/main.10e86879.chunk.css",
+    "static/css/main.5bbd9dec.chunk.css",
     "static/js/main.68696a36.chunk.js"
   ]
 }
