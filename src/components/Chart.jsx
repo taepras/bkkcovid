@@ -9,26 +9,17 @@ import ChartBars from './ChartBars';
 import ChartLine from './ChartLine';
 import { useSimplifiedSeries, useSmoothedSeries } from '../utils/useSmoothedSeries';
 import domtoimage from 'dom-to-image';
+import Button from './Button';
 
 
 const ChartContainer = styled.div`
   /* padding: 30px; */
   width: 100%;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   /* height: 50vh; */
   flex: 1;
   position: relative;
   transition: all 0.2s;
-`;
-
-const SvgContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  font-family: 'Mitr', sans-serif;
 
   text {
     font-family: 'Mitr', sans-serif;
@@ -51,7 +42,7 @@ const SvgContainer = styled.div`
   text.text-white {
     fill: #fff;
   }
-  
+
   .y-axis-deaths {
     opacity: 0.3;
 
@@ -77,10 +68,22 @@ const SvgContainer = styled.div`
   .x-axis-deaths text { opacity: 0; }
 `;
 
+const SvgContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  font-family: 'Mitr', sans-serif;
+
+  
+`;
+
 const Chart = ({
   processedData,
   datesRange,
-  padding = { top: 0, right: 0, bottom: 12, left: 40 },
+  padding = { top: 18, right: 0, bottom: 12, left: 40 },
   breakPoint = 0.7
 }) => {
 
@@ -96,7 +99,7 @@ const Chart = ({
   const deathBoxHeight = 160;
   const boxWidth = width - pad * 2;
   const boxPadding = 16;
-  const textBoxWidth = 160;
+  const textBoxWidth = 200;
   const topOffset = 120;
   const chartPadding = padding;
 
@@ -108,6 +111,28 @@ const Chart = ({
   });
 
   const gap = 50;
+
+  const toThaiDate = (dt) => {
+    const monthString = [
+      '',
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค. ',
+    ]
+
+    return (dt && !Number.isNaN(dt.get('day')))
+      ? `${dt.get('day')} ${monthString[dt.get('month')]} ${(dt.get('year') + 543) % 100}`
+      : '';
+  }
 
   const lastestDay = useMemo(() => {
     const weekDayString = [
@@ -132,27 +157,12 @@ const Chart = ({
       '#C33646',
     ]
 
-    const monthString = [
-      '',
-      'ม.ค.',
-      'ก.พ.',
-      'มี.ค.',
-      'เม.ย.',
-      'พ.ค.',
-      'มิ.ย.',
-      'ก.ค.',
-      'ส.ค.',
-      'ก.ย.',
-      'ต.ค.',
-      'พ.ย.',
-      'ธ.ค. ',
-    ]
     const lastEntry = processedData[processedData.length - 1];
     const dt = DateTime.fromISO(lastEntry?.date);
     const dayNum = dt.weekday;
     return {
       iso: lastEntry?.date,
-      dateStr: `${dt.get('day')} ${monthString[dt.get('month')]} ${(dt.get('year') + 543) % 100}`,
+      dateStr: toThaiDate(dt),
       dayColor: weekDayColor[dayNum],
       weekdayStr: weekDayString[dayNum],
       weekdayNum: dayNum
@@ -177,12 +187,18 @@ const Chart = ({
   const scaleY = useMemo(() => d3.scaleLinear()
     // .domain([0, d3.max(processedData, d => +d?.thailand?.NewConfirmed ?? 0)])
     .domain([0, d3.max(processedData, d => +d?.bangkok?.new_cases ?? 0)])
-    .range([boxHeight - 2 * boxPadding - chartPadding.top - chartPadding.bottom, 0])
+    .range([
+      boxHeight - 2 * boxPadding - chartPadding.top - chartPadding.bottom,
+      0
+    ])
     , [processedData, paddedHeight]);
 
   const scaleYDeaths = useMemo(() => d3.scaleLinear()
     .domain([0, d3.max(processedData, d => +d?.bangkok?.new_death ?? 0)])
-    .range([deathBoxHeight - 2 * boxPadding - chartPadding.top - chartPadding.bottom, 0])
+    .range([
+      deathBoxHeight - 2 * boxPadding - chartPadding.top - chartPadding.bottom,
+      0
+    ])
     , [processedData, paddedHeight]);
 
   useEffect(() => {
@@ -198,7 +214,7 @@ const Chart = ({
     console.log(processedData);
 
     svg.select("g.x-axis")
-      .attr("transform", `translate(0,${boxHeight - 2 * boxPadding - chartPadding.bottom})`)
+      .attr("transform", `translate(0,${boxHeight - 2 * boxPadding - chartPadding.bottom - chartPadding.top})`)
       .call(d3.axisBottom(scaleX)
         .tickValues(scaleX.domain())
         .tickFormat(d => DateTime.fromJSDate(d).toISODate())
@@ -221,7 +237,7 @@ const Chart = ({
 
     svg.select("g.x-axis-deaths")
       // .attr("transform", `translate(0,${paddedHeight * (1 - breakPoint)})`)
-      .attr("transform", `translate(0,${deathBoxHeight - 2 * boxPadding - chartPadding.bottom})`)
+      .attr("transform", `translate(0,${deathBoxHeight - 2 * boxPadding - chartPadding.bottom - chartPadding.top})`)
       .call(d3.axisBottom(scaleX)
         .tickValues(scaleX.domain())
         .tickFormat(d => DateTime.fromJSDate(d).toISODate())
@@ -289,16 +305,24 @@ const Chart = ({
     // img.src = url;
   };
 
-  return <>
+  return (
+  <>
     <ChartContainer>
-      <SvgContainer ref={observe}>
-        <div id="container" style={{ textAlign: 'left', display: 'inline-block' }}>
+      {/* <SvgContainer ref={observe}>
+        <div id="container" style={{
+          textAlign: 'left',
+          display: 'inline-block',
+          maxWidth: '100%',
+          width: '800px',
+          margin: 'auto'
+        }}> */}
           <svg
             id="chart"
             className="d3-component"
-            width={width}
-            height={height}
+            width={'100%'}
+            // height={height}
             ref={svgRef}
+            viewBox={`0 0 ${width} ${height}`}
             style={{
               backgroundColor: '#F3E1E3'
             }}
@@ -313,14 +337,19 @@ const Chart = ({
             <g transform={`translate(${pad},${topOffset})`}>
               <rect width={boxWidth} height={boxHeight} rx={16} fill="#C33646" class="shadow" />
               <rect width={textBoxWidth} height={boxHeight} rx={16} fill="#0002" />
-              <g transform={`translate(${textBoxWidth / 2},${boxHeight / 2})`}>
-                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ผู้ติดเชื้อยืนยันวันนี้</text>
-                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
-                  +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
+              <g transform={`translate(${textBoxWidth / 2},${boxHeight / 2 - 8})`}>
+                <text y={-48} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้ติดเชื้อยืนยัน</text>
+                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={60} class="text-white">
+              +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
                 </text>
+                {((processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt ?? null) !== null) &&
+                  <text y={44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
+                (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt?.toLocaleString?.()})
+                  </text>
+                }
               </g>
-              <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
-                สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()}
+              <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.6 }}>
+            สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()} ราย
               </text>
 
               {/* AXIS DATE TICKS */}
@@ -333,7 +362,7 @@ const Chart = ({
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
-                {processedData?.[0]?.date}
+                {toThaiDate(DateTime.fromISO(processedData?.[0]?.date))}
               </text>
               <text
                 x={boxWidth - boxPadding - padding.right}
@@ -344,7 +373,10 @@ const Chart = ({
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
-                {processedData?.[processedData?.length - 1]?.date}
+                {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
+              </text>
+              <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.6 }}>
+            ข้อมูลย้อนหลัง 2 เดือน
               </text>
             </g>
             <g class="chart">
@@ -379,18 +411,20 @@ const Chart = ({
             <g transform={`translate(${pad},${topOffset + boxHeight + gutter})`}>
               <rect width={boxWidth} height={deathBoxHeight} rx={16} fill="#333031" class="shadow" />
               <rect width={textBoxWidth} height={deathBoxHeight} rx={16} fill="#fff1" />
-              <g transform={`translate(${textBoxWidth / 2},${deathBoxHeight / 2 - 8})`}>
-                <text y={-36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ผู้เสียชีวิตยืนยันวันนี้</text>
+              <g transform={`translate(${textBoxWidth / 2},${deathBoxHeight / 2 - 6})`}>
+                <text y={-44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้เสียชีวิต</text>
                 <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
-                  +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
+              +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
                 </text>
-                <text y={36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
-                  ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()}
+                {((processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt ?? null) !== null) &&
+                  <text y={36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
+                (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()})
+                  </text>
+                }
+                <text y={66} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.5 }}>
+              สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()} ราย
                 </text>
               </g>
-              <text x={textBoxWidth / 2} y={deathBoxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">
-                สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()}
-              </text>
               {/* AXIS DATE TICKS */}
               <text
                 x={textBoxWidth + boxPadding + padding.left}
@@ -401,7 +435,7 @@ const Chart = ({
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
-                {processedData?.[0]?.date}
+                {toThaiDate(DateTime.fromISO(processedData?.[0]?.date))}
               </text>
               <text
                 x={boxWidth - boxPadding - padding.right}
@@ -412,7 +446,10 @@ const Chart = ({
                 fontWeight="400"
                 fontSize={12}
                 class="text-white">
-                {processedData?.[processedData?.length - 1]?.date}
+                {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
+              </text>
+              <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.5 }}>
+            ข้อมูลย้อนหลัง 2 เดือน
               </text>
             </g>
             <g class="chart-death">
@@ -435,24 +472,37 @@ const Chart = ({
             <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
             <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text>
 
+            <g transform={`translate(${width - pad},${height - pad})`}>
+              <image x="-54" y="-32" width="54" height="32" href="/bkkcovid/logo_initials.svg" />
+            </g>
             {/* <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
           <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
           </svg>
+        {/* </div> */}
+        <div style={{ textAlign: 'center', margin: '30px' }}>
+          <div style={{ display: 'flex' }}>
+            <Button as="a" href="#" onClick={downloadPng} isFullWidth mb style={{ flexGrow: 1, flexBasis: 0, marginRight: '8px' }}>
+          ดาวน์โหลดไฟล์ภาพ
+            </Button>
+            <Button as="a" href="https://docs.google.com/spreadsheets/d/1VY6ddD-DdmgIlX_RiFZnIa7ZFXB-mH8nD0hVxaROrP0/edit#gid=0" target="_blank" isFullWidth mb style={{ flexGrow: 1, flexBasis: 0, marginLeft: '16px' }}>
+          ดูไฟล์ข้อมูล
+            </Button>
+          </div>
+          <p style={{lineHeight: 1.2}}>
+        ขอบคุณข้อมูลตัวเลขจาก <a href="https://www.facebook.com/informationcovid19" target="_blank">ศบค.</a> และ <a href="http://www.bangkok.go.th/covid19" target="_blank">กทม.</a>
+            <br />รวบรวมข้อมูลและทำ visualization โดย
+            <br /><a href="https://taepras.com" target="_blank">ธนวิชญ์ ประสงค์พงษ์ชัย (taepras.com)</a>
+            <br />
+            <br />
+            <a href="https://taepras.medium.com/%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%B6%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%A3-%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B9%80%E0%B8%AD%E0%B8%87-%E0%B8%81%E0%B8%B1%E0%B8%9A%E0%B8%81%E0%B8%A3%E0%B8%B2%E0%B8%9F%E0%B9%82%E0%B8%84%E0%B8%A7%E0%B8%B4%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%9E-cbf7d41e2f94" target="_blank">
+              อ่านที่มาของการทำกราฟนี้ (medium.com)
+            </a>
+          </p>
         </div>
-        <br />
-        <br />
-        <div style={{ textAlign: 'center' }}>
-          <button onClick={downloadPng} style={{
-            backgroundColor: '#C33646',
-            padding: '6px 12px',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-          }}>Download PNG</button>
-        </div>
-      </SvgContainer>
+      {/* </SvgContainer> */ }
     </ChartContainer>
-  </>;
+  </>
+  );
 }
 
 export default Chart;

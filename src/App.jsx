@@ -18,6 +18,12 @@ const GraphicsContainer = styled.div`
   /* padding: 30px; */
 `
 
+const Container = styled.div`
+  width: 100%;
+  max-width: 640px;
+  margin: auto;
+`
+
 const api_url_daily_cases = "https://covid19.th-stat.com/api/open/timeline";
 const gsheets_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5KEVlTJbefwhG7GXg5swMW1rDSctbXuwZR-omHnxdet_DReCYnu0r_CVgzLTxwPqKlz4WMvKOppv1/pub?gid=0&single=true&output=csv";
 
@@ -106,12 +112,12 @@ function App() {
 
   return (
     <div className="App">
-      <GraphicsContainer>
+      <Container>
         {/* <h1>สถานการณ์โควิดใน กทม.</h1> */}
         <Chart
           datesRange={datesRange}
           processedData={processedData} />
-      </GraphicsContainer>
+      </Container>
     </div>
   );
 }

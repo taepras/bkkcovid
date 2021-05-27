@@ -11,6 +11,8 @@ const ChartLine = ({
   scaleY,
   gutter = 2,
   color = "#000",
+  nMark = 7,
+  markOffset = 24,
   ...props
 }) => {
 
@@ -37,9 +39,29 @@ const ChartLine = ({
 
   }, [processedData]);
 
+
+  const markPos = useMemo(() => {
+    if (processedData.length <= 0) return { x: 0, y: 0 };
+
+    console.log('markPos',
+      processedData,
+      scaleX(new Date(processedData?.[nMark]?.date)),
+      scaleY(processedData?.[nMark]?.value))
+    // const i = Math.min(processedData.length / 2);
+
+    return {
+      x: scaleX(new Date(processedData?.[nMark]?.date)),
+      y: scaleY(processedData?.[nMark]?.value)
+    }
+  }, [processedData, nMark]);
+
   return <>
     <g class="line" ref={gRef} {...props}>
       <path />
+      <g class="average-mark" transform={`translate(${markPos.x},${markPos.y})`}>
+        <line x1={0} y1={0} x2={0} y2={-markOffset} stroke="#fff" />
+        <text textAnchor="middle" dominantBaseline="baseline" y={-markOffset-4} style={{ fill: '#fff' }} fontSize={12} fontWeight="400">ค่าเฉลี่ย 7 วัน</text>
+      </g>
     </g>
   </>;
 }

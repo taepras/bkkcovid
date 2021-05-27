@@ -35,7 +35,7 @@ const ChartBars = ({
 
     barGroup.selectAll("rect.b")
       .data(d => {
-        console.log(d)
+        // console.log(d)
         return [d];
       })
       .enter()
