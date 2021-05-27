@@ -306,16 +306,10 @@ const Chart = ({
   };
 
   return (
-  <>
-    <ChartContainer>
-      {/* <SvgContainer ref={observe}>
-        <div id="container" style={{
-          textAlign: 'left',
-          display: 'inline-block',
-          maxWidth: '100%',
-          width: '800px',
-          margin: 'auto'
-        }}> */}
+    <>
+      <ChartContainer>
+        {/* <SvgContainer ref={observe}> */}
+        <div id="container">
           <svg
             id="chart"
             className="d3-component"
@@ -340,16 +334,16 @@ const Chart = ({
               <g transform={`translate(${textBoxWidth / 2},${boxHeight / 2 - 8})`}>
                 <text y={-48} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้ติดเชื้อยืนยัน</text>
                 <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={60} class="text-white">
-              +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
+                  +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
                 </text>
                 {((processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt ?? null) !== null) &&
                   <text y={44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
-                (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt?.toLocaleString?.()})
+                    (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt?.toLocaleString?.()})
                   </text>
                 }
               </g>
               <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.6 }}>
-            สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()} ราย
+                สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()} ราย
               </text>
 
               {/* AXIS DATE TICKS */}
@@ -376,7 +370,7 @@ const Chart = ({
                 {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
               </text>
               <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.6 }}>
-            ข้อมูลย้อนหลัง 2 เดือน
+                ข้อมูลย้อนหลัง 2 เดือน
               </text>
             </g>
             <g class="chart">
@@ -414,15 +408,15 @@ const Chart = ({
               <g transform={`translate(${textBoxWidth / 2},${deathBoxHeight / 2 - 6})`}>
                 <text y={-44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้เสียชีวิต</text>
                 <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
-              +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
+                  +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
                 </text>
                 {((processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt ?? null) !== null) &&
                   <text y={36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
-                (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()})
+                    (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()})
                   </text>
                 }
                 <text y={66} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.5 }}>
-              สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()} ราย
+                  สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()} ราย
                 </text>
               </g>
               {/* AXIS DATE TICKS */}
@@ -449,7 +443,7 @@ const Chart = ({
                 {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
               </text>
               <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.5 }}>
-            ข้อมูลย้อนหลัง 2 เดือน
+                ข้อมูลย้อนหลัง 2 เดือน
               </text>
             </g>
             <g class="chart-death">
@@ -473,23 +467,29 @@ const Chart = ({
             <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text>
 
             <g transform={`translate(${width - pad},${height - pad})`}>
-              <image x="-54" y="-32" width="54" height="32" href="/bkkcovid/logo_initials.svg" />
+              <g transform={`translate(-54,-32)`}>
+                {/* <image x="-54" y="-32" width="54" height="32" href="/bkkcovid/logo_initials.svg" /> */}
+                <path d="M21.9537 20.21C23.8502 22.7782 26.2604 22.9758 27.4457 22.9758C29.9744 22.9758 31.9499 21.988 33.2538 20.7632C34.2416 19.8149 35.9406 17.7208 35.9406 13.8488C35.9406 10.4508 34.6367 8.31716 33.3724 7.05286C31.4363 5.1168 29.0262 4.7612 27.5247 4.7612C24.3638 4.7612 22.7044 6.46019 21.9537 7.52694V5.31435H17.1333V31.4706H21.9537V20.21ZM26.2209 9.02841C27.3667 9.02841 28.6311 9.463 29.5003 10.2532C30.4485 11.162 30.9622 12.5844 30.9622 13.8488C30.9622 15.1131 30.488 16.5355 29.4608 17.4838C28.8286 18.0764 27.8013 18.7086 26.2209 18.7086C24.7195 18.7086 23.6921 18.1159 23.06 17.5627C22.1117 16.733 21.4795 15.4292 21.4795 13.8488C21.4795 12.2683 22.0327 11.083 23.0995 10.1742C23.9687 9.38397 24.9565 9.02841 26.2209 9.02841Z" fill="#222222" />
+                <path d="M14.5573 10.1777V5.35121H9.7309V0.524704H4.90437V5.35121H0.0778656V10.1777H4.90437V19.5089H9.7309V10.1777H14.5573Z" fill="#222222" />
+                <path d="M14.5574 19.5089H9.7309V24.3354H14.5574V19.5089Z" fill="#222222" />
+                <path d="M52.6494 28.5618V23.7323H34.733V28.5618H52.6494Z" fill="#14E1CA" />
+              </g>
             </g>
             {/* <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
           <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
           </svg>
-        {/* </div> */}
+        </div>
         <div style={{ textAlign: 'center', margin: '30px' }}>
           <div style={{ display: 'flex' }}>
             <Button as="a" href="#" onClick={downloadPng} isFullWidth mb style={{ flexGrow: 1, flexBasis: 0, marginRight: '8px' }}>
-          ดาวน์โหลดไฟล์ภาพ
+              ดาวน์โหลดไฟล์ภาพ
             </Button>
             <Button as="a" href="https://docs.google.com/spreadsheets/d/1VY6ddD-DdmgIlX_RiFZnIa7ZFXB-mH8nD0hVxaROrP0/edit#gid=0" target="_blank" isFullWidth mb style={{ flexGrow: 1, flexBasis: 0, marginLeft: '16px' }}>
-          ดูไฟล์ข้อมูล
+              ดูไฟล์ข้อมูล
             </Button>
           </div>
-          <p style={{lineHeight: 1.2}}>
-        ขอบคุณข้อมูลตัวเลขจาก <a href="https://www.facebook.com/informationcovid19" target="_blank">ศบค.</a> และ <a href="http://www.bangkok.go.th/covid19" target="_blank">กทม.</a>
+          <p style={{ lineHeight: 1.2 }}>
+            ขอบคุณข้อมูลตัวเลขจาก <a href="https://www.facebook.com/informationcovid19" target="_blank">ศบค.</a> และ <a href="http://www.bangkok.go.th/covid19" target="_blank">กทม.</a>
             <br />รวบรวมข้อมูลและทำ visualization โดย
             <br /><a href="https://taepras.com" target="_blank">ธนวิชญ์ ประสงค์พงษ์ชัย (taepras.com)</a>
             <br />
@@ -499,9 +499,9 @@ const Chart = ({
             </a>
           </p>
         </div>
-      {/* </SvgContainer> */ }
-    </ChartContainer>
-  </>
+        {/* </SvgContainer> */}
+      </ChartContainer>
+    </>
   );
 }
 
