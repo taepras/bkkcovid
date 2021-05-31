@@ -8,8 +8,10 @@ import styled from 'styled-components';
 import ChartBars from './ChartBars';
 import ChartLine from './ChartLine';
 import { useSimplifiedSeries, useSmoothedSeries } from '../utils/useSmoothedSeries';
+import { toThaiDate } from '../utils/toThaiDate';
 import domtoimage from 'dom-to-image';
 import Button from './Button';
+import ChartBlock from "./ChartBlock";
 
 
 const ChartContainer = styled.div`
@@ -110,30 +112,6 @@ const Chart = ({
     },
   });
 
-  const gap = 50;
-
-  const toThaiDate = (dt) => {
-    const monthString = [
-      '',
-      'ม.ค.',
-      'ก.พ.',
-      'มี.ค.',
-      'เม.ย.',
-      'พ.ค.',
-      'มิ.ย.',
-      'ก.ค.',
-      'ส.ค.',
-      'ก.ย.',
-      'ต.ค.',
-      'พ.ย.',
-      'ธ.ค. ',
-    ]
-
-    return (dt && !Number.isNaN(dt.get('day')))
-      ? `${dt.get('day')} ${monthString[dt.get('month')]} ${(dt.get('year') + 543) % 100}`
-      : '';
-  }
-
   const lastestDay = useMemo(() => {
     const weekDayString = [
       'อาทิตย์',
@@ -201,79 +179,16 @@ const Chart = ({
     ])
     , [processedData, paddedHeight]);
 
-  useEffect(() => {
-    if (!svgRef.current)
-      return;
-
-    var svg = d3.select(svgRef.current)
-
-    svg.select("g.chart")
-      .attr("transform",
-        `translate(${pad + textBoxWidth + boxPadding + chartPadding.left},${topOffset + boxPadding + chartPadding.top})`);
-
-    console.log(processedData);
-
-    svg.select("g.x-axis")
-      .attr("transform", `translate(0,${boxHeight - 2 * boxPadding - chartPadding.bottom - chartPadding.top})`)
-      .call(d3.axisBottom(scaleX)
-        .tickValues(scaleX.domain())
-        .tickFormat(d => DateTime.fromJSDate(d).toISODate())
-        .tickSize(0)
-        .tickPadding(8)
-      );
-
-    svg.select("g.y-axis")
-      .call(d3.axisLeft(scaleY)
-        .ticks(7)
-        .tickPadding(8)
-        .tickSize(-(boxWidth - textBoxWidth - boxPadding * 2 - padding.left))
-      );
-
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-    svg.select("g.chart-death")
-      .attr("transform",
-        `translate(${pad + textBoxWidth + boxPadding + chartPadding.left},${boxPadding + topOffset + boxHeight + gutter + chartPadding.top})`);
-
-    svg.select("g.x-axis-deaths")
-      // .attr("transform", `translate(0,${paddedHeight * (1 - breakPoint)})`)
-      .attr("transform", `translate(0,${deathBoxHeight - 2 * boxPadding - chartPadding.bottom - chartPadding.top})`)
-      .call(d3.axisBottom(scaleX)
-        .tickValues(scaleX.domain())
-        .tickFormat(d => DateTime.fromJSDate(d).toISODate())
-        .tickSize(0)
-        .tickPadding(8)
-      );
-
-    svg.select("g.y-axis-deaths")
-      .call(d3.axisLeft(scaleYDeaths)
-        .ticks(5)
-        .tickPadding(8)
-        .tickSize(-(boxWidth - textBoxWidth - boxPadding * 2 - padding.left))
-      );
-
-    // // Add the line
-    // svg.append("path")
-    //   .datum(processedData)
-    //   .attr("fill", "none")
-    //   .attr("stroke", "steelblue")
-    //   .attr("stroke-width", 1.5)
-    //   .attr("d", d3.line()
-    //     .x(d => scaleX(new Date(d.date)))
-    //     .y(d => scaleY(d?.bangkok?.new_cases ?? 0))
-    //   )
-  }, [processedData]);
-
   const downloadPng = () => {
     console.log(svgRef.current)
-    const scale = 2;
+    const scale = 3;
     const elm = document.getElementById('container');
     console.log(elm.offsetHeight, elm.offsetWidth)
     domtoimage.toPng(elm, {
       height: elm.offsetHeight * scale,
       width: elm.offsetWidth * scale,
       style: {
-        transform: `scale(${scale}) translate(${elm.offsetWidth / 2 / scale}px, ${elm.offsetHeight / 2 / scale}px)`
+        transform: `scale(${scale}) translate(${elm.offsetWidth / scale}px, ${elm.offsetHeight / scale}px)`
       },
     })
       .then(function (dataUrl) {
@@ -283,26 +198,6 @@ const Chart = ({
         link.click();
       })
       .catch((err) => console.error(err));
-
-    // var svgString = new XMLSerializer().serializeToString(svgRef.current);
-
-    // var canvas = canvasRef.current;
-    // var ctx = canvas.getContext("2d");
-    // var DOMURL = window.self.URL || window.self.webkitURL || window.self;
-    // var img = new Image();
-    // var svg = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    // var url = DOMURL.createObjectURL(svg);
-    // img.onload = function () {
-    //   ctx.drawImage(img, 0, 0);
-    //   var png = canvas.toDataURL("image/png");
-    //   let url = png.replace(/^data:image\/png/, 'data:application/octet-stream');
-    //   imageLinkRef.current.setAttribute('href', url);
-    //   imageLinkRef.current.click();
-
-    //   // document.querySelector('#png-container').innerHTML = '<img src="' + png + '"/>';
-    //   DOMURL.revokeObjectURL(png);
-    // };
-    // img.src = url;
   };
 
   return (
@@ -328,143 +223,50 @@ const Chart = ({
             <text x={width - pad - 80} y={pad + 10} dominantBaseline="hanging" textAnchor="middle" fontWeight="400" fontSize={16} class="text-white">ประจำวัน{lastestDay.weekdayStr}ที่</text>
             <text x={width - pad - 80} y={pad + 28} dominantBaseline="hanging" textAnchor="middle" fontWeight="600" fontSize={24} class="text-white">{lastestDay.dateStr}</text>
 
-            <g transform={`translate(${pad},${topOffset})`}>
-              <rect width={boxWidth} height={boxHeight} rx={16} fill="#C33646" class="shadow" />
-              <rect width={textBoxWidth} height={boxHeight} rx={16} fill="#0002" />
-              <g transform={`translate(${textBoxWidth / 2},${boxHeight / 2 - 8})`}>
-                <text y={-48} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้ติดเชื้อยืนยัน</text>
-                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={60} class="text-white">
-                  +{processedData?.[processedData.length - 1]?.bangkok?.new_cases?.toLocaleString?.()}
-                </text>
-                {((processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt ?? null) !== null) &&
-                  <text y={44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
-                    (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt?.toLocaleString?.()})
-                  </text>
-                }
-              </g>
-              <text x={textBoxWidth / 2} y={boxHeight - boxPadding} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.6 }}>
-                สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases?.toLocaleString?.()} ราย
-              </text>
-
-              {/* AXIS DATE TICKS */}
-              <text
-                x={textBoxWidth + boxPadding + padding.left}
-                y={boxHeight - boxPadding - padding.bottom + 6}
-                dominantBaseline="hanging"
-                textAnchor="start"
-
-                fontWeight="400"
-                fontSize={12}
-                class="text-white">
-                {toThaiDate(DateTime.fromISO(processedData?.[0]?.date))}
-              </text>
-              <text
-                x={boxWidth - boxPadding - padding.right}
-                y={boxHeight - boxPadding - padding.bottom + 6}
-                dominantBaseline="hanging"
-                textAnchor="end"
-
-                fontWeight="400"
-                fontSize={12}
-                class="text-white">
-                {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
-              </text>
-              <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.6 }}>
-                ข้อมูลย้อนหลัง 2 เดือน
-              </text>
-            </g>
-            <g class="chart">
-              {/* <ChartBars
-              processedData={nationalNewCases}
-              color="#fdd"
-              scaleX={scaleX}
+            <ChartBlock
+              label="ผู้ติดเชื้อยืนยัน"
+              svgRef={svgRef}
+              x={pad}
+              y={topOffset}
+              boxHeight={boxHeight}
+              boxWidth={boxWidth}
+              padding={chartPadding}
               scaleY={scaleY}
-            /> */}
-              <g class="x-axis axis"></g>
-              <g class="y-axis axis"></g>
-              <ChartBars
-                processedData={bangkokNewCases}
-                color="#fff6"
-                scaleX={scaleX}
-                scaleY={scaleY}
-              />
-              <ChartLine
-                processedData={smoothedNewCases}
-                color="#fff"
-                scaleX={scaleX}
-                scaleY={scaleY}
-              />
-              {/* <ChartLine
-              processedData={smoothedNewCasesNational}
-              color="#f00"
               scaleX={scaleX}
-              scaleY={scaleY}
-            /> */}
-            </g>
+              rawSeries={bangkokNewCases}
+              smoothedSeries={smoothedNewCases}
+              accumulated={processedData?.[processedData.length - 1]?.bangkok?.accumulated_cases}
+              latestValueOutskirt={processedData?.[processedData.length - 1]?.bangkok?.new_cases_outskirt}
+              latestValue={processedData?.[processedData.length - 1]?.bangkok?.new_cases}
+              firstDate={processedData?.[0]?.date}
+              latestDate={processedData?.[processedData?.length - 1]?.date}
+              tickCount={8}
+              fill="#C33646"
+              fillPanel="#0002"
+            // notes="ไม่รวมในเรือนจำ"
+            />
+            <ChartBlock
+              label="ผู้เสียชีวิต"
+              x={pad}
+              y={topOffset + boxHeight + gutter}
+              boxHeight={deathBoxHeight}
+              boxWidth={boxWidth}
+              padding={chartPadding}
+              scaleY={scaleYDeaths}
+              scaleX={scaleX}
+              rawSeries={bangkokNewDeaths}
+              smoothedSeries={smoothedNewDeaths}
+              accumulated={processedData?.[processedData.length - 1]?.bangkok?.accumulated_death}
+              latestValueOutskirt={processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt}
+              latestValue={processedData?.[processedData.length - 1]?.bangkok?.new_death}
+              firstDate={processedData?.[0]?.date}
+              latestDate={processedData?.[processedData?.length - 1]?.date}
+              fill="#333031"
+              fillPanel="#fff1"
+            />
 
-            <g transform={`translate(${pad},${topOffset + boxHeight + gutter})`}>
-              <rect width={boxWidth} height={deathBoxHeight} rx={16} fill="#333031" class="shadow" />
-              <rect width={textBoxWidth} height={deathBoxHeight} rx={16} fill="#fff1" />
-              <g transform={`translate(${textBoxWidth / 2},${deathBoxHeight / 2 - 6})`}>
-                <text y={-44} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={24} class="text-white">ผู้เสียชีวิต</text>
-                <text y={0} dominantBaseline="middle" textAnchor="middle" fontWeight="600" fontSize={48} class="text-white">
-                  +{processedData?.[processedData.length - 1]?.bangkok?.new_death?.toLocaleString?.()}
-                </text>
-                {((processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt ?? null) !== null) &&
-                  <text y={36} dominantBaseline="middle" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white">
-                    (ปริมณฑล +{processedData?.[processedData.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()})
-                  </text>
-                }
-                <text y={66} dominantBaseline="baseline" textAnchor="middle" fontWeight="400" fontSize={20} class="text-white" style={{ opacity: 0.5 }}>
-                  สะสม {processedData?.[processedData.length - 1]?.bangkok?.accumulated_death?.toLocaleString?.()} ราย
-                </text>
-              </g>
-              {/* AXIS DATE TICKS */}
-              <text
-                x={textBoxWidth + boxPadding + padding.left}
-                y={deathBoxHeight - boxPadding - padding.bottom + 6}
-                dominantBaseline="hanging"
-                textAnchor="start"
-
-                fontWeight="400"
-                fontSize={12}
-                class="text-white">
-                {toThaiDate(DateTime.fromISO(processedData?.[0]?.date))}
-              </text>
-              <text
-                x={boxWidth - boxPadding - padding.right}
-                y={deathBoxHeight - boxPadding - padding.bottom + 6}
-                dominantBaseline="hanging"
-                textAnchor="end"
-
-                fontWeight="400"
-                fontSize={12}
-                class="text-white">
-                {toThaiDate(DateTime.fromISO(processedData?.[processedData?.length - 1]?.date))}
-              </text>
-              <text y={boxPadding} x={boxWidth - boxPadding} fontSize={12} dominantBaseline="hanging" textAnchor="end" class="text-white" style={{ opacity: 0.5 }}>
-                ข้อมูลย้อนหลัง 2 เดือน
-              </text>
-            </g>
-            <g class="chart-death">
-              <g class="x-axis-deaths axis"></g>
-              <g class="y-axis-deaths axis"></g>
-              <ChartBars
-                processedData={bangkokNewDeaths}
-                color="#fff6"
-                scaleX={scaleX}
-                scaleY={scaleYDeaths}
-              />
-              <ChartLine
-                processedData={smoothedNewDeaths}
-                color="#fff"
-                scaleX={scaleX}
-                scaleY={scaleYDeaths}
-              />
-            </g>
-
-            <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
-            <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text>
+            <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">*ไม่รวมผู้ติดเชื้อในเรือนจำ / รวบรวมข้อมูลจาก ศบค. และ กทม. </text>
+            <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ติดตามสถานการณ์และและดูไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid</text>
 
             <g transform={`translate(${width - pad},${height - pad})`}>
               <g transform={`translate(-54,-32)`}>
@@ -474,13 +276,53 @@ const Chart = ({
                 <path d="M14.5574 19.5089H9.7309V24.3354H14.5574V19.5089Z" fill="#222222" />
                 <path d="M52.6494 28.5618V23.7323H34.733V28.5618H52.6494Z" fill="#14E1CA" />
               </g>
-            </g>
-            {/* <text x={pad} y={height - pad - 20} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">รวบรวมข้อมูลจาก ศบค. และ bangkok.go.th/covid19</text>
-          <text x={pad} y={height - pad} dominantBaseline="bottom" fontWeight="400" fontSize={16} fill="#222">ดูกราฟและไฟล์ข้อมูลได้ที่ taepras.com/bkkcovid19</text> */}
+            </g> 
+            
           </svg>
         </div>
-        <div style={{ textAlign: 'center', margin: '30px' }}>
-          <div style={{ display: 'flex' }}>
+        <div style={{ textAlign: 'center', margin: '32px', marginTop: '0px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <div
+              className="fb-share-button"
+              data-href="https://taepras.github.io/bkkcovid/"
+              data-layout="button"
+              data-size="large"
+              style={{ marginRight: '16px' }}
+            >
+              <a
+                target="_blank"
+                href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftaepras.github.io%bkkcovid%2F&amp;src=sdkpreparse"
+                className="fb-xfbml-parse-ignore"
+                rel="noreferrer"
+              >
+                Share
+              </a>
+            </div>
+            <a
+              href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+              className="twitter-share-button"
+              data-size="large"
+              data-url="https://taepras.github.io/bkkcovid/"
+              data-via="taepras"
+              data-dnt="true"
+              data-show-count="false"
+            >
+              Tweet
+            </a>
+            <div style={{ marginLeft: '16px', display: 'inline-block' }}>
+              <div
+                className="line-it-button"
+                data-lang="en"
+                data-type="share-a"
+                data-ver="3"
+                data-url="https://taepras.github.io/bkkcovid/"
+                data-color="default"
+                data-size="large"
+                data-count="false"
+              />
+            </div>
+          </div>
+          <div style={{ display: 'flex', marginBottom: '16px' }}>
             <Button as="a" href="#" onClick={downloadPng} isFullWidth mb style={{ flexGrow: 1, flexBasis: 0, marginRight: '8px' }}>
               ดาวน์โหลดไฟล์ภาพ
             </Button>

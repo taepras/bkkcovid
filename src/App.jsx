@@ -6,6 +6,7 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import { DateTime } from 'luxon';
 import styled from 'styled-components';
+import { toThaiDate } from './utils/toThaiDate';
 
 const GraphicsContainer = styled.div`
   position: absolute;
@@ -32,7 +33,7 @@ const convDate = (x) => {
 }
 
 function App() {
-  const [nationalData, setNationalData] = useState();
+  const [nationalData, setNationalData] = useState({ Data: [] });
   const [bangkokData, setBangkokData] = useState();
 
   const [startDate, setStartDate] = useState(DateTime.now().minus({ months: 2 }).startOf('day'))
@@ -50,10 +51,10 @@ function App() {
 
 
   useEffect(() => {
-    axios.get(api_url_daily_cases).then((res) => {
-      console.log(res.data);
-      setNationalData(res.data);
-    });
+    // axios.get(api_url_daily_cases).then((res) => {
+    //   console.log(res.data);
+    //   setNationalData(res.data);
+    // });
 
     axios.get(gsheets_url).then((res) => {
       const data = Papa.parse(res.data, {
@@ -110,6 +111,11 @@ function App() {
     return combined;
   }, [nationalData, bangkokData, startDate, endDate, datesRange]);
 
+  const showTweetText = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get('tweettext')
+  });
+
   return (
     <div className="App">
       <Container>
@@ -117,6 +123,21 @@ function App() {
         <Chart
           datesRange={datesRange}
           processedData={processedData} />
+        {showTweetText &&
+          <p style={{ padding: '16px', border: '1px #7F353E solid', borderRadius: '8px' }} id="tweet-text" onClick={() => {
+            navigator.clipboard.writeText(
+              document.getElementById("tweet-text").innerText);
+          }}>
+            ยอดโควิดกรุงเทพวันนี้ ({toThaiDate(processedData?.[processedData?.length - 1]?.date, true)})<br />
+            <br />
+          พบเชื้อ +{processedData?.[processedData?.length - 1]?.bangkok?.new_cases?.toLocaleString?.()} (ปริมณฑล +{processedData?.[processedData?.length - 1]?.bangkok?.new_cases_outskirt?.toLocaleString?.()})<br />
+          เสียชีวิต +{processedData?.[processedData?.length - 1]?.bangkok?.new_death?.toLocaleString?.()} (ปริมณฑล +{processedData?.[processedData?.length - 1]?.bangkok?.new_death_outskirt?.toLocaleString?.()})<br />
+            <br />
+          #กราฟโควิด #โควิดกรุงเทพ<br />
+          ติดตามสถานการณ์ได้ที่ https://taepras.com/bkkcovid<br />
+          รวบรวมข้อมูลจาก ศบค. (@oc_ccsa) และ กทม. (@pr_bangkok)<br />
+          </p>
+        }
       </Container>
     </div>
   );
