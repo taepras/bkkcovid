@@ -339,6 +339,11 @@ const Chart = ({
             <a href="https://taepras.medium.com/%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%B6%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%A3-%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B9%80%E0%B8%AD%E0%B8%87-%E0%B8%81%E0%B8%B1%E0%B8%9A%E0%B8%81%E0%B8%A3%E0%B8%B2%E0%B8%9F%E0%B9%82%E0%B8%84%E0%B8%A7%E0%B8%B4%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%9E-cbf7d41e2f94" target="_blank">
               อ่านที่มาของการทำกราฟนี้ (medium.com)
             </a>
+            <br />
+            <br />
+            เว็บไซต์นี้เป็น open source หากสนใจนำไปใช้ต่อ<br/>สามารถเข้าไปได้ที่ <a href="https://github.com/taepras/bkkcovid" target="_blank">
+              github.com/taepras/bkkcovid
+            </a>
           </p>
         </div>
         {/* </SvgContainer> */}
