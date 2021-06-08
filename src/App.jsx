@@ -74,34 +74,31 @@ function App() {
     if (!nationalData || !bangkokData)
       return [];
 
-    const filteredNational = nationalData.Data.filter(x => {
-      const dt = DateTime.fromJSDate(new Date(x.Date));
-      return (
-        dt >= startDate.startOf('day') &&
-        dt <= endDate.endOf('day')
-      )
-    });
+    const filteredNational = nationalData.Data
+      // .filter(x => {
+      //   const dt = DateTime.fromJSDate(new Date(x.Date));
+      //   return (
+      //     dt >= startDate.startOf('day') &&
+      //     dt <= endDate.endOf('day')
+      //   )
+      // });
 
     // console.log('bkk', nationalData);
     // console.log('bkk', bangkokData);
-    const filteredGSheets = bangkokData.data.filter(x => {
-      const dt = DateTime.fromISO(x.date);
-      return (
-        dt >= startDate.startOf('day') &&
-        dt <= endDate.endOf('day')
-      )
-    });
+    const filteredGSheets = bangkokData.data
+      // .filter(x => {
+      //   const dt = DateTime.fromISO(x.date);
+      //   return (
+      //     dt >= startDate.startOf('day') &&
+      //     dt <= endDate.endOf('day')
+      //   )
+      // });
     // console.log('bkk', filteredGSheets);
 
     const combined = datesRange.map(date => {
       return {
         date: date,
-        thailand: filteredNational?.filter(d => {
-          // console.log('zzzz', new Date(d.Date), date)
-          return convDate(d.Date) === date
-          // return true
-          // // return DateTime.fromJSDate(new Date(d.Date)).toISODate() === date
-        })?.[0] ?? {},
+        thailand: filteredNational?.filter(d => convDate(d.Date) === date)?.[0] ?? {},
         bangkok: filteredGSheets?.filter(d => d.date === date)?.[0] ?? {}
       }
     })

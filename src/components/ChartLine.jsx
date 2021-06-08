@@ -57,7 +57,7 @@ const ChartLine = ({
 
   return <>
     <g class="line" ref={gRef} {...props}>
-      <path />
+      <path stroke-linejoin="round" />
       <g class="average-mark" transform={`translate(${markPos.x},${markPos.y})`}>
         <line x1={0} y1={0} x2={0} y2={-markOffset} stroke="#fff" />
         <text textAnchor="middle" dominantBaseline="baseline" y={-markOffset-4} style={{ fill: '#fff' }} fontSize={12} fontWeight="400">ค่าเฉลี่ย 7 วัน</text>

@@ -147,12 +147,20 @@ const Chart = ({
     }
   }, [processedData]);
 
-  const smoothedNewCases = useSmoothedSeries(processedData, d => d?.bangkok?.new_cases ?? 0);
+  // const smoothedNewCases = useSmoothedSeries(processedData, d => d?.bangkok?.new_cases ?? 0);
   // const smoothedNewCasesNational = useSmoothedSeries(processedData, d => d?.thailand?.NewConfirmed ?? 0);
   const bangkokNewCases = useSimplifiedSeries(processedData, d => d?.bangkok?.new_cases ?? 0);
+  const smoothedNewCases = processedData.map(d => ({
+    date: d.date,
+    value: d?.bangkok?.new_cases_7day_average ?? 0
+  }));
   const nationalNewCases = useSimplifiedSeries(processedData, d => d?.thailand?.NewConfirmed ?? 0);
   const bangkokNewDeaths = useSimplifiedSeries(processedData, d => d?.bangkok?.new_death ?? 0);
-  const smoothedNewDeaths = useSmoothedSeries(processedData, d => d?.bangkok?.new_death ?? 0);
+  // const smoothedNewDeaths = useSmoothedSeries(processedData, d => d?.bangkok?.new_death ?? 0);
+  const smoothedNewDeaths = processedData.map(d => ({
+    date: d.date,
+    value: d?.bangkok?.new_deaths_7day_average ?? 0
+  }));
 
   const paddedWidth = useMemo(() => width - padding.left - padding.right, [width, padding]);
   const paddedHeight = useMemo(() => height - padding.top - padding.bottom, [height, padding]);
@@ -330,6 +338,9 @@ const Chart = ({
               ดูไฟล์ข้อมูล
             </Button>
           </div>
+          {/* <pre style={{textAlign:'left'}}>
+            {JSON.stringify(smoothedNewCases, null, 2)}
+          </pre> */}
           <p style={{ lineHeight: 1.2 }}>
             ขอบคุณข้อมูลตัวเลขจาก <a href="https://www.facebook.com/informationcovid19" target="_blank">ศบค.</a> และ <a href="http://www.bangkok.go.th/covid19" target="_blank">กทม.</a>
             <br />รวบรวมข้อมูลและทำ visualization โดย
